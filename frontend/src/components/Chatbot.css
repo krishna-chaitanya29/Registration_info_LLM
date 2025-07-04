@@ -1,4 +1,9 @@
 .chat-container {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 32px rgba(60, 120, 200, 0.13), 0 1.5px 4px rgba(0,0,0,0.08);
+  width: 100%;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   height: 85vh;
