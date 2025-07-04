@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mysql = require('mysql2'); 
+const mongoose = require('mongoose');
+const User = require('./models/User');
+const Feedback = require('./models/Feedback');
+const Chat = require('./models/Chat');
 
 
 const app = express();
@@ -10,89 +13,86 @@ const port = 5001;
 app.use(bodyParser.json());
 app.use(cors());
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Kc.@mac1',
-  database: 'registration_info_llm'
+mongoose.connect('mongodb://localhost:27017/registration_info_llm', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-    return;
-  }
-  console.log('Connected to MySQL database.');
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB database.');
 });
 
-app.post('/signup', (req, res) => {
-  const { username, password, email } = req.body;
-  const query = 'INSERT INTO users (username, password, email) VALUES (?, ?, ?)';
-  db.query(query, [username, password, email], (err, results) => {
-    if (err) {
-      console.error('Error signing up:', err);
-      res.status(500).send('Error signing up');
-      return;
-    }
+// --- Signup ---
+app.post('/signup', async (req, res) => {
+  try {
+    const { username, password, email } = req.body;
+    const user = new User({ username, password, email });
+    await user.save();
     res.send('Signup successful');
-  });
+  } catch (err) {
+    console.error('Error signing up:', err);
+    res.status(500).send('Error signing up');
+  }
 });
 
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
-  db.query(query, [username, password], (err, results) => {
-    if (err) {
-      console.error('Error logging in:', err);
-      res.status(500).send('Error logging in');
-      return;
-    }
-    if (results.length > 0) {
-      res.send(results[0]);
+// --- Login ---
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username, password });
+    if (user) {
+      res.send(user);
     } else {
       res.status(401).send('Invalid credentials');
     }
-  });
+  } catch (err) {
+    console.error('Error logging in:', err);
+    res.status(500).send('Error logging in');
+  }
 });
 
-app.post('/feedback', (req, res) => {
-  const { userId, improvement, problem, rating } = req.body;
-  const query = 'INSERT INTO user_feedback (user_id, improvement, problem, rating) VALUES (?, ?, ?, ?)';
-  db.query(query, [userId, improvement, problem, rating], (err, results) => {
-    if (err) {
-      console.error('Error submitting feedback:', err);
-      res.status(500).send('Error submitting feedback');
-      return;
-    }
+// --- Feedback ---
+app.post('/feedback', async (req, res) => {
+  try {
+    const { userId, improvement, problem, rating } = req.body;
+    const feedback = new Feedback({ userId, improvement, problem, rating });
+    await feedback.save();
     res.send('Feedback submitted successfully');
-  });
+  } catch (err) {
+    console.error('Error submitting feedback:', err);
+    res.status(500).send('Error submitting feedback');
+  }
 });
 
-app.post('/saveChat', (req, res) => {
-  const { userId, message, isUser } = req.body;
-  const query = 'INSERT INTO chat_history (user_id, message, is_user) VALUES (?, ?, ?)';
-  db.query(query, [userId, message, isUser], (err, results) => {
-    if (err) {
-      console.error('Error saving chat:', err);
-      res.status(500).send('Error saving chat');
-      return;
-    }
-    res.send('Chat saved successfully');
-  });
+// --- Chat History ---
+app.get('/chat-history/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const chats = await Chat.find({ userId }).sort({ createdAt: 1 });
+    res.send(chats.map(c => ({ text: c.message, isUser: c.isUser })));
+  } catch (err) {
+    console.error('Error fetching chat history:', err);
+    res.status(500).send('Error fetching chat history');
+  }
 });
 
-app.get('/getChatHistory', (req, res) => {
-  const { userId } = req.query;
-  const query = 'SELECT * FROM chat_history WHERE user_id = ?';
-  db.query(query, [userId], (err, results) => {
-    if (err) {
-      console.error('Error fetching chat history:', err);
-      res.status(500).send('Error fetching chat history');
-      return;
+app.post('/chat-history', async (req, res) => {
+  try {
+    const { userId, messages } = req.body;
+    if (!userId || !Array.isArray(messages)) {
+      return res.status(400).send('Invalid request');
     }
-    res.send(results);
-  });
+    await Chat.deleteMany({ userId });
+    if (messages.length === 0) return res.send('Chat history updated');
+    await Chat.insertMany(messages.map(m => ({ userId, message: m.text, isUser: !!m.isUser })));
+    res.send('Chat history updated');
+  } catch (err) {
+    console.error('Error saving chat history:', err);
+    res.status(500).send('Error saving chat history');
+  }
 });
+
+// --- Registration info pages are static, handled by frontend, so no backend needed ---
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

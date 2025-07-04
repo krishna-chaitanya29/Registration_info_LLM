@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import './Chatbot.css';
 
 const Chatbot = ({ user }) => {
@@ -69,26 +69,41 @@ const Chatbot = ({ user }) => {
   };
 
   return (
-    <div className="chat-container" ref={chatContainerRef}>
-      <div className="chat-header">
-        Registration_info_Bot
+    <div className="chatbot-outer-container">
+      <div className="chat-container" ref={chatContainerRef}>
+        <div className="chat-header">
+          <span className="chat-header-title">Registration_info_Bot</span>
+        </div>
+        <div className="chat-body">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={
+                message.isUser
+                  ? 'user-message message-bubble'
+                  : message.isError
+                  ? 'bot-message message-bubble error-message'
+                  : 'bot-message message-bubble'
+              }
+            >
+              {message.text}
+            </div>
+          ))}
+        </div>
+        <div className="chat-input-row">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            className="chat-input"
+            placeholder="Type a query..."
+          />
+          <button className="chat-send-button" onClick={handleSendMessage}>
+            Send
+          </button>
+        </div>
       </div>
-      <div className="chat-body">
-        {messages.map((message, index) => (
-          <div key={index} className={message.isUser ? 'user-message' : 'bot-message'}>
-            {message.text}
-          </div>
-        ))}
-      </div>
-      <input 
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-        className="chat-input"
-        placeholder="Type a query..."
-      />
-      <button className="chat-send-button" onClick={handleSendMessage}>Send</button>
     </div>
   );
 };

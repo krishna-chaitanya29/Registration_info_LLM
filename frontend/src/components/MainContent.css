@@ -1,46 +1,112 @@
+/* Modern, visually engaging main content styles */
+
 .main-content {
+  background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(60,120,200,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  margin: 2rem auto;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  align-items: center;
 }
 
 .text-content {
-  flex: 3;
+  width: 100%;
+  margin-bottom: 1.5rem;
 }
 
-.text-content h2 {
-  margin: 0 0 20px 0;
-  color: white;
-
+.main-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #2a3a5e;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  text-align: center;
 }
 
-.text-content p {
-  margin: 0;
-  color: white;
-  font-size: large;
-  margin-bottom: 33px;
+.main-description {
+  font-size: 1.08rem;
+  color: #3a4668;
+  margin-bottom: 1.2rem;
+  line-height: 1.7;
+  text-align: center;
 }
-.text-content p2 {
-  margin: 0;
-  color: white;
-  font-size: large;
-  /* margin-bottom: 16px; */
+
+.main-highlight {
+  background: #e9efff;
+  border-left: 4px solid #4f8cff;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  color: #2a3a5e;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 6px rgba(79,140,255,0.06);
+  text-align: center;
+}
+
+.highlight {
+  color: #4f8cff;
+  font-weight: 700;
 }
 
 .buttons {
-  flex: 2;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: row;
+  gap: 1.1rem;
+  justify-content: center;
+  margin-top: 1.2rem;
 }
 
 .content-button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  border: none;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #4f8cff 60%, #6fc3ff 100%);
   color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 0.85rem 1.7rem;
+  font-size: 1.08rem;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
-  display:flex;flexDirection:row;margin: 10px; alignItems:center;
+  box-shadow: 0 2px 8px rgba(79,140,255,0.10);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  outline: none;
+}
+
+.content-button:hover, .content-button:focus {
+  background: linear-gradient(135deg, #357ae8 60%, #4f8cff 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(79,140,255,0.16);
+}
+
+.content-button.land {
+  background: linear-gradient(135deg, #4f8cff 60%, #6fc3ff 100%);
+}
+.content-button.marriage {
+  background: linear-gradient(135deg, #ff7eb3 60%, #ff758c 100%);
+}
+.content-button.firm {
+  background: linear-gradient(135deg, #43e97b 60%, #38f9d7 100%);
+}
+
+@media (max-width: 700px) {
+  .main-content {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    margin: 1rem 0.2rem;
+    max-width: 98vw;
+  }
+  .main-title {
+    font-size: 1.3rem;
+  }
+  .main-description, .main-highlight {
+    font-size: 0.98rem;
+    padding: 0.7rem 0.5rem;
+  }
+  .buttons {
+    gap: 0.5rem;
+  }
+  .content-button {
+    padding: 0.7rem 1.1rem;
+    font-size: 0.98rem;
+  }
 }

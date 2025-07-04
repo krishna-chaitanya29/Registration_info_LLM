@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
 import './Signup.css';
 
 const Signup = ({ onClose }) => {
@@ -21,27 +21,30 @@ const Signup = ({ onClose }) => {
   return (
     <div className="signup-container">
       <div className="signup-box">
-        <h2>Signup</h2>
+        <h2 className="signup-title">Sign Up</h2>
         <input
+          className="signup-input"
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
         <input
+          className="signup-input"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <input
+          className="signup-input"
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <button onClick={handleSignup}>Signup</button>
-        <button onClick={onClose}>Close</button>
+        <button className="signup-btn" onClick={handleSignup}>Sign Up</button>
+        <button className="close-btn" onClick={onClose}>Close</button>
       </div>
     </div>
   );
